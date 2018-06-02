@@ -92,5 +92,20 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 
 include $(BUILD_EXECUTABLE)
 
+# ==========================================================
+# Build the executable: apkname
+# ==========================================================
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := apkname
+LOCAL_CFLAGS := $(aaptCFlags)
+LOCAL_CPPFLAGS := $(aaptCppFlags)
+LOCAL_LDLIBS := $(aaptLdLibs)
+LOCAL_SRC_FILES := ApkName.cpp
+LOCAL_STATIC_LIBRARIES := libaapt $(aaptStaticLibs)
+LOCAL_FORCE_STATIC_EXECUTABLE := true
+
+include $(BUILD_EXECUTABLE)
+
 
 endif # No TARGET_BUILD_APPS or TARGET_BUILD_PDK
