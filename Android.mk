@@ -17,7 +17,7 @@ LOCAL_PATH:= $(call my-dir)
 # libandroidfw is partially built for the host (used by obbtool, aapt, and others)
 # These files are common to host and target builds.
 
-commonSources := \
+Sources := \
     Asset.cpp \
     AssetDir.cpp \
     AssetManager.cpp \
@@ -30,36 +30,13 @@ commonSources := \
     ZipFileRO.cpp \
     ZipUtils.cpp
 
-deviceSources := \
-    $(commonSources) \
-    BackupData.cpp \
-    BackupHelpers.cpp \
-    CursorWindow.cpp \
-    DisplayEventDispatcher.cpp
-
-hostSources := $(commonSources)
-
-# For the host
-# =====================================================
-include $(CLEAR_VARS)
-
-LOCAL_MODULE:= libandroidfw
-LOCAL_MODULE_HOST_OS := darwin linux windows
-LOCAL_CFLAGS += -DSTATIC_ANDROIDFW_FOR_TOOLS
-LOCAL_CFLAGS += -Wall -Werror -Wunused -Wunreachable-code
-LOCAL_SRC_FILES:= $(hostSources)
-LOCAL_C_INCLUDES := external/zlib
-
-include $(BUILD_HOST_STATIC_LIBRARY)
-
-
-# For the device
+# To use with aapt for android
 # =====================================================
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE:= libandroidfw
-LOCAL_SRC_FILES:= $(deviceSources)
+LOCAL_MODULE:= libandroidfw_static
+LOCAL_SRC_FILES:= $(Sources)
 LOCAL_C_INCLUDES := \
     system/core/include
 LOCAL_STATIC_LIBRARIES := libziparchive libbase
@@ -73,14 +50,4 @@ LOCAL_SHARED_LIBRARIES := \
 
 LOCAL_CFLAGS += -Wall -Werror -Wunused -Wunreachable-code
 
-include $(BUILD_SHARED_LIBRARY)
-
-
-# Include subdirectory makefiles
-# ============================================================
-
-# If we're building with ONE_SHOT_MAKEFILE (mm, mmm), then what the framework
-# team really wants is to build the stuff defined by this makefile.
-ifeq (,$(ONE_SHOT_MAKEFILE))
-include $(call first-makefiles-under,$(LOCAL_PATH))
-endif
+include $(BUILD_STATIC_LIBRARY)
