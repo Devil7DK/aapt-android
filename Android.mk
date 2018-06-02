@@ -47,85 +47,50 @@ aaptSources := \
     ZipEntry.cpp \
     ZipFile.cpp
 
-aaptTests := \
-    tests/AaptConfig_test.cpp \
-    tests/AaptGroupEntry_test.cpp \
-    tests/Pseudolocales_test.cpp \
-    tests/ResourceFilter_test.cpp \
-    tests/ResourceTable_test.cpp
-
-aaptHostStaticLibs := \
+aaptStaticLibs := \
     libandroidfw \
     libpng \
     libutils \
     liblog \
     libcutils \
-    libexpat \
-    libziparchive-host \
+    libexpat_static \
+    libziparchive \
+    libz \
     libbase
 
 aaptCFlags := -DAAPT_VERSION=\"$(BUILD_NUMBER_FROM_FILE)\"
 aaptCFlags += -Wall -Werror
 
-aaptHostLdLibs_linux := -lrt -ldl -lpthread
-
-# Statically link libz for MinGW (Win SDK under Linux),
-# and dynamically link for all others.
-aaptHostStaticLibs_windows := libz
-aaptHostLdLibs_linux += -lz
-aaptHostLdLibs_darwin := -lz
+aaptLdLibs_linux := -ldl -lz
 
 
 # ==========================================================
-# Build the host static library: libaapt
+# Build the static library: libaapt
 # ==========================================================
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libaapt
-LOCAL_MODULE_HOST_OS := darwin linux windows
 LOCAL_CFLAGS := -Wno-format-y2k -DSTATIC_ANDROIDFW_FOR_TOOLS $(aaptCFlags)
 LOCAL_CPPFLAGS := $(aaptCppFlags)
-LOCAL_CFLAGS_darwin := -D_DARWIN_UNLIMITED_STREAMS
 LOCAL_SRC_FILES := $(aaptSources)
-LOCAL_STATIC_LIBRARIES := $(aaptHostStaticLibs)
-LOCAL_STATIC_LIBRARIES_windows := $(aaptHostStaticLibs_windows)
+LOCAL_STATIC_LIBRARIES := $(aaptStaticLibs)
 
-include $(BUILD_HOST_STATIC_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
 
 # ==========================================================
-# Build the host executable: aapt
+# Build the executable: aapt
 # ==========================================================
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := aapt
-LOCAL_MODULE_HOST_OS := darwin linux windows
 LOCAL_CFLAGS := $(aaptCFlags)
 LOCAL_CPPFLAGS := $(aaptCppFlags)
-LOCAL_LDLIBS_darwin := $(aaptHostLdLibs_darwin)
-LOCAL_LDLIBS_linux := $(aaptHostLdLibs_linux)
+LOCAL_LDLIBS := $(aaptLdLibs)
 LOCAL_SRC_FILES := $(aaptMain)
-LOCAL_STATIC_LIBRARIES := libaapt $(aaptHostStaticLibs)
-LOCAL_STATIC_LIBRARIES_windows := $(aaptHostStaticLibs_windows)
+LOCAL_STATIC_LIBRARIES := libaapt $(aaptStaticLibs)
+LOCAL_FORCE_STATIC_EXECUTABLE := true
 
-include $(BUILD_HOST_EXECUTABLE)
-
-
-# ==========================================================
-# Build the host tests: libaapt_tests
-# ==========================================================
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := libaapt_tests
-LOCAL_CFLAGS := $(aaptCFlags)
-LOCAL_CPPFLAGS := $(aaptCppFlags)
-LOCAL_LDLIBS_darwin := $(aaptHostLdLibs_darwin)
-LOCAL_LDLIBS_linux := $(aaptHostLdLibs_linux)
-LOCAL_SRC_FILES := $(aaptTests)
-LOCAL_C_INCLUDES := $(LOCAL_PATH)
-LOCAL_STATIC_LIBRARIES := libaapt $(aaptHostStaticLibs)
-LOCAL_STATIC_LIBRARIES_windows := $(aaptHostStaticLibs_windows)
-
-include $(BUILD_HOST_NATIVE_TEST)
+include $(BUILD_EXECUTABLE)
 
 
 endif # No TARGET_BUILD_APPS or TARGET_BUILD_PDK
