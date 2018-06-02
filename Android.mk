@@ -48,7 +48,7 @@ aaptSources := \
     ZipFile.cpp
 
 aaptStaticLibs := \
-    libandroidfw \
+    libandroidfw_static \
     libpng \
     libutils \
     liblog \
@@ -107,5 +107,13 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 
 include $(BUILD_EXECUTABLE)
 
+# Include subdirectory makefiles
+# ============================================================
+
+# If we're building with ONE_SHOT_MAKEFILE (mm, mmm), then what the framework
+# team really wants is to build the stuff defined by this makefile.
+ifeq (,$(ONE_SHOT_MAKEFILE))
+include $(call first-makefiles-under,$(LOCAL_PATH))
+endif
 
 endif # No TARGET_BUILD_APPS or TARGET_BUILD_PDK
