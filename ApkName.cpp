@@ -26,9 +26,23 @@
 #include "ResourceTable.h"
 #include "XMLNode.h"
 
-/*
- * Parse args.
- */
+bool containsOnlyASCII(const std::string& text) {
+  for (auto c: text) {
+    if (static_cast<unsigned char>(c) > 127) {
+      return false;
+    }
+  }
+  return true;
+}
+
+std::string trim(std::string s) {
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))));
+	s.erase(std::find_if(s.rbegin(), s.rend(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
 int main(int argc, char* const argv[])
 {
 	if (argc < 2){
@@ -185,7 +199,9 @@ int main(int argc, char* const argv[])
 						if (localeStr == NULL || strlen(localeStr) == 0) {
 							label = llabel;
 						} else {
-							if (label == "") {
+							bool label_isASCII = containsOnlyASCII(ResTable::normalizeForOutput(label.string()).string());
+							bool llabel_isASCII = containsOnlyASCII(ResTable::normalizeForOutput(llabel.string()).string());
+							if (label == "" || (label_isASCII == false && llabel_isASCII == true)) {
 								label = llabel;
 							}
 						}
@@ -195,6 +211,10 @@ int main(int argc, char* const argv[])
 				app_name = label;
 			}
 		}
+	}
+
+	if (app_name == "" || containsOnlyASCII(app_name) == false) {
+		app_name = package_name;
 	}
 
 	printf("%s=%s\n",ResTable::normalizeForOutput(package_name.c_str()).string(),ResTable::normalizeForOutput(app_name.c_str()).string());
