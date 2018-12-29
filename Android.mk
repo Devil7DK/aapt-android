@@ -53,7 +53,7 @@ aaptStaticLibs := \
     libutils \
     liblog \
     libcutils \
-    libexpat \
+    libexpat_rw \
     libziparchive \
     libz \
     libbase
