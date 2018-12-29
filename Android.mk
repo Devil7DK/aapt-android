@@ -73,6 +73,7 @@ LOCAL_MODULE := libaapt
 LOCAL_CFLAGS := -Wno-format-y2k -DSTATIC_ANDROIDFW_FOR_TOOLS $(aaptCFlags)
 LOCAL_CPPFLAGS := $(aaptCppFlags)
 LOCAL_SRC_FILES := $(aaptSources)
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_STATIC_LIBRARIES := $(aaptStaticLibs)
 
 include $(BUILD_STATIC_LIBRARY)
@@ -87,6 +88,7 @@ LOCAL_CFLAGS := $(aaptCFlags)
 LOCAL_CPPFLAGS := $(aaptCppFlags)
 LOCAL_LDLIBS := $(aaptLdLibs)
 LOCAL_SRC_FILES := $(aaptMain)
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_STATIC_LIBRARIES := libaapt $(aaptStaticLibs)
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 
@@ -102,6 +104,7 @@ LOCAL_CFLAGS := $(aaptCFlags)
 LOCAL_CPPFLAGS := $(aaptCppFlags)
 LOCAL_LDLIBS := $(aaptLdLibs)
 LOCAL_SRC_FILES := ApkName.cpp
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_STATIC_LIBRARIES := libaapt $(aaptStaticLibs)
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 
